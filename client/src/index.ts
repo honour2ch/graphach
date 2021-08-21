@@ -1,5 +1,5 @@
 import cytoscape from "cytoscape"
-import * as utils from './utils'
+import * as utils from './Utils'
 
 cytoscape({
     container: utils.createCytoscapeContainer(),

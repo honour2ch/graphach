@@ -4,17 +4,21 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "serve": "webpack serve --mode=development --progress"
+    "serve": "webpack serve --mode=development --progress",
+    "test": "jest"
   },
   "dependencies": {
-    "cytoscape": "^3.19.1",
-    "ts-loader": "^9.2.5"
+    "cytoscape": "^3.19.1"
   },
   "devDependencies": {
     "@types/cytoscape": "^3.14.17",
+    "@types/jest": "^27.0.1",
     "@types/node": "^16.7.1",
     "html-webpack-plugin": "^5.3.2",
+    "jest": "^27.0.6",
     "prettier": "^2.3.2",
+    "ts-jest": "^27.0.5",
+    "ts-loader": "^9.2.5",
     "tslint": "^6.1.3",
     "tslint-loader": "^3.5.4",
     "typescript": "^4.3.5",

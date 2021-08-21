@@ -12,3 +12,7 @@ export function createCytoscapeContainer() {
 
     return container
 }
+
+export function convertThreadToGraph(a: number, b: number) {
+    return a + b
+}
