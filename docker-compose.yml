@@ -8,7 +8,8 @@ services:
       - FLASK_ENV=development
       ## Позволяет отслеживать процесс работы приложения в командной строке
       - PYTHONUNBUFFERED=True
-      ##
+      ## Переменная окружения для запуска flask
+      - ENV=test
     restart: on-failure
     volumes:
       - ./backend:/backend
