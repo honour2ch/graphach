@@ -8,7 +8,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "cytoscape": "^3.19.1"
+    "@types/uuid": "^8.3.1",
+    "cytoscape": "^3.19.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/cytoscape": "^3.14.17",
