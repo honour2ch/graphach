@@ -14,3 +14,17 @@ export interface IAnswerInfo {
     thread: number
     post: number
 }
+
+export interface IBoundingBox {
+    x1: number
+    y1: number
+    x2: number
+    y2: number
+    w: number
+    h: number
+}
+
+export interface IPosition {
+    x: number
+    y: number
+}

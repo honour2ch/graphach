@@ -1,22 +1,25 @@
 import cytoscape from "cytoscape"
 import * as Utils from './utils'
 import threadData from './thread-data'
-import {IPost, IThread} from "./Interfaces";
+import {IBoundingBox, IPosition, IPost, IThread} from "./Interfaces";
 
 const dagre = require('cytoscape-dagre')
 
 cytoscape.use( dagre )
-
+const postsContainer = Utils.createPostsContainer()
+const cytoscapeContainer = Utils.createCytoscapeContainer()
 const data = Utils.convertThreadToGraph(threadData)
 const app = cytoscape({
-    container: Utils.createCytoscapeContainer(),
+    container: cytoscapeContainer,
     style: [{
         selector: 'node',
         style: {
-            label: 'data(comment)',
+            // label: 'data(comment)',
             shape: 'rectangle',
+            width: '350',
+            height: '300',
             'text-wrap': 'wrap',
-            'text-max-width': '100',
+            'text-max-width': '300',
             'text-halign': 'center',
             'text-valign': 'center'
         }
@@ -34,7 +37,7 @@ const app = cytoscape({
         //
         // // general layout options
         fit: true, // whether to fit to viewport
-        padding: 30, // fit padding
+        // padding: 30, // fit padding
         // spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
         // nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
         // animate: false, // whether to transition the node positions
@@ -60,4 +63,47 @@ function onNodeClick(e: any) {
     })
 }
 
+function onRender() {
+    const ext = app.extent()
+    const nodesPositions = app
+        .nodes()
+        .filter(n => {
+        // @ts-ignore
+        const bb = n.boundingBox()
+        return bb.x1 > ext.x1 && bb.x2 < ext.x2 && bb.y1 > ext.y1 && bb.y2 < ext.y2
+    })
+        .map(item => {
+            console.log(item)
+            return {
+                data: item.data(),
+                // @ts-ignore
+                boundBox: item.boundingBox()
+            }
+        })
+    const zoom = app.zoom()
+    const postsPositions = Utils.calcBoxPosition(ext, nodesPositions, zoom)
+
+    postsContainer.innerHTML = ''
+
+    postsPositions.forEach((nodeData: any) => {
+        const el = document.createElement('div')
+        el.className = 'post'
+        el.style.width = `${350*zoom}px`
+        el.style.height = `${300*zoom}px`
+        el.style.position = 'absolute'
+        el.style.left = `${nodeData.x}px`
+        el.style.top = `${nodeData.y}px`
+        el.style.zIndex = '9999'
+        el.style.textOverflow = 'ellipsis'
+        el.style.overflow = 'hidden'
+
+        el.innerHTML = nodeData.data.comment
+
+        postsContainer.appendChild(el)
+    })
+}
+
 app.on('click', 'node', onNodeClick)
+
+console.log(app)
+app.on('render', onRender)
