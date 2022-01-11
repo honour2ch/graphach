@@ -1,37 +1,63 @@
 import cytoscape from "cytoscape"
-import * as Utils from './Utils'
+import * as Utils from './utils'
 import threadData from './thread-data'
+import {IPost, IThread} from "./Interfaces";
 
-cytoscape({
+const dagre = require('cytoscape-dagre')
+
+cytoscape.use( dagre )
+
+const data = Utils.convertThreadToGraph(threadData)
+const app = cytoscape({
     container: Utils.createCytoscapeContainer(),
     style: [{
         selector: 'node',
         style: {
-            'label': 'data(comment)'
+            label: 'data(comment)',
+            shape: 'rectangle',
+            'text-wrap': 'wrap',
+            'text-max-width': '100',
+            'text-halign': 'center',
+            'text-valign': 'center'
         }
     }],
     layout: {
-        name: 'grid',
-
-        fit: true, // whether to fit the viewport to the graph
-        padding: 30, // padding used on fit
-        boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-        avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
-        avoidOverlapPadding: 10, // extra spacing around nodes when avoidOverlap: true
-        nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
-        spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
-        condense: false, // uses all available space on false, uses minimal space on true
-        rows: undefined, // force num of rows in the grid
-        cols: undefined, // force num of columns in the grid
-        // position: function( node ){}, // returns { row, col } for element
-        sort: undefined, // a sorting function to order the nodes; e.g. function(a, b){ return a.data('weight') - b.data('weight') }
-        animate: false, // whether to transition the node positions
-        animationDuration: 500, // duration of animation in ms if enabled
-        animationEasing: undefined, // easing of animation if enabled
-        // animateFilter: function ( node, i ){ return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
-        ready: undefined, // callback on layoutready
-        stop: undefined, // callback on layoutstop
-        // transform: function (node, position ){ return position; }
+        //@ts-ignore
+        name: 'dagre',
+        // nodeSep: '1', // the separation between adjacent nodes in the same rank
+        // edgeSep: undefined, // the separation between adjacent edges in the same rank
+        rankSep: '123', // the separation between each rank in the layout
+        // rankDir: undefined, // 'TB' for top to bottom flow, 'LR' for left to right,
+        ranker: 'network-simplex', // Type of algorithm to assign a rank to each node in the input graph. Possible values: 'network-simplex', 'tight-tree' or 'longest-path'
+        // minLen: function( edge ){ return 1; }, // number of ranks to keep between the source and target of the edge
+        // edgeWeight: function( edge ){ return 1; }, // higher weight edges are generally made shorter and straighter than lower weight edges
+        //
+        // // general layout options
+        fit: true, // whether to fit to viewport
+        padding: 30, // fit padding
+        // spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
+        // nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
+        // animate: false, // whether to transition the node positions
+        // animateFilter: function( node, i ){ return true; }, // whether to animate specific nodes when animation is on; non-animated nodes immediately go to their final positions
+        // animationDuration: 500, // duration of animation in ms if enabled
+        // animationEasing: undefined, // easing of animation if enabled
+        // boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+        // transform: function( node, pos ){ return pos; }, // a function that applies a transform to the final node position
+        // ready: function(){}, // on layoutready
+        // stop: function(){} // on layoutstop
     },
-    elements: Utils.convertThreadToGraph(threadData)
+    elements: data
 })
+
+function onNodeClick(e: any) {
+    const targetId = e.target.id()
+
+    data.nodes.forEach(node => {
+        if (node.data.id === targetId) {
+            const answersInfo = Utils.getAnswersInfo(node.data.comment)
+            console.log(node.data, node.data.comment, answersInfo.map(answerInfo => answerInfo.post))
+        }
+    })
+}
+
+app.on('click', 'node', onNodeClick)

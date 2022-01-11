@@ -6,6 +6,11 @@ export interface IThread {
 export interface IPost {
     num: number
     timestamp: number
-    subject: string,
+    subject: string
     comment: string
+}
+
+export interface IAnswerInfo {
+    thread: number
+    post: number
 }
