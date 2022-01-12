@@ -1,6 +1,5 @@
 import cytoscape, {Stylesheet} from 'cytoscape'
 import * as Utils from './utils'
-import threadData from './thread-data'
 import {IThread} from "./Interfaces";
 const dagre = require('cytoscape-dagre')
 
@@ -38,7 +37,6 @@ export default class App {
     cy: cytoscape.Core
     cytoscapeContainer = Utils.createCytoscapeContainer()
     postsContainer = Utils.createPostsContainer()
-    data = Utils.convertThreadToGraph(threadData)
 
     constructor(config?: IAppConfig) {
         this.config = {...defaultConfig, ...config}
@@ -49,6 +47,7 @@ export default class App {
         this.cy = cytoscape({
             container: this.cytoscapeContainer,
             style: cyStyle,
+            wheelSensitivity: 0.1
         })
 
         this.cy.on('click', 'node', this.onNodeClick.bind(this))
@@ -81,11 +80,11 @@ export default class App {
     private onNodeClick(e: any) {
         const targetId = e.target.id()
 
-        this.data.nodes.forEach(node => {
-            if (node.data.id === targetId) {
-                const answersInfo = Utils.getAnswersInfo(node.data.comment)
-            }
-        })
+        // this.data.nodes.forEach(node => {
+        //     if (node.data.id === targetId) {
+        //         const answersInfo = Utils.getAnswersInfo(node.data.comment)
+        //     }
+        // })
     }
 
     private getVisibleNodes(normalizePositionData = false) {

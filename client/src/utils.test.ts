@@ -1,5 +1,4 @@
 import * as Utils from './utils'
-import threadData from './thread-data'
 import {IPost, IThread} from "./Interfaces";
 
 describe('Utils', () => {
