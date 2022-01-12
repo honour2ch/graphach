@@ -23,6 +23,26 @@ export function createPostsContainer() {
     return container
 }
 
+export function createPostContainer(comment: string, width: number, height: number, x: number, y: number, fontSize: number): HTMLDivElement {
+    const postContainer = document.createElement('div')
+    const commentContainer = document.createElement('article')
+
+    postContainer.className = 'post post_type_reply'
+    commentContainer.className = 'post__message '
+
+    postContainer.appendChild(commentContainer)
+    commentContainer.innerHTML = comment
+
+    postContainer.className = 'post'
+    postContainer.style.width = `${width}px`
+    postContainer.style.height = `${height}px`
+    postContainer.style.left = `${x}px`
+    postContainer.style.top = `${y}px`
+    postContainer.style.fontSize = `${fontSize}px`
+
+    return postContainer
+}
+
 export function convertThreadToGraph(thread: IThread): cytoscape.ElementsDefinition {
     const result: cytoscape.ElementsDefinition = {
         nodes: [],

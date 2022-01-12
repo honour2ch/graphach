@@ -2,6 +2,7 @@ import cytoscape from "cytoscape"
 import * as Utils from './utils'
 import threadData from './thread-data'
 import './style.scss'
+import './makaba.scss'
 
 const dagre = require('cytoscape-dagre')
 
@@ -85,17 +86,13 @@ function onRender() {
     postsContainer.innerHTML = ''
 
     postsPositions.forEach((nodeData: any) => {
-        const el = document.createElement('div')
-        el.className = 'post'
-        el.style.width = `${350*zoom}px`
-        el.style.height = `${300*zoom}px`
-        el.style.left = `${nodeData.x}px`
-        el.style.top = `${nodeData.y}px`
-        el.style.fontSize = 17 * zoom + 'px'
+        const width = 350*zoom
+        const height = 300*zoom
+        const {x, y} = nodeData
+        const fontSize = 17 * zoom
+        const postContainer = Utils.createPostContainer(nodeData.data.comment, width, height, x, y, fontSize)
 
-        el.innerHTML = nodeData.data.comment
-
-        postsContainer.appendChild(el)
+        postsContainer.appendChild(postContainer)
     })
 }
 
