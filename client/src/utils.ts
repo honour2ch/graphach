@@ -104,21 +104,6 @@ export function convertThreadToGraph(thread: IThread): cytoscape.ElementsDefinit
     return result
 }
 
-function createNodes(post: IPost): cytoscape.ElementDefinition[] {
-    const result: cytoscape.ElementDefinition[] = []
-    const answerInfo = getAnswersInfo(post.comment)
-
-    if (answerInfo.length === 0) {
-        result.push(createNode(post))
-    }
-
-    for (let i = 0; i < answerInfo.length; i++) {
-        result.push(createNode(post))
-    }
-
-    return result
-}
-
 function createNode(post: IPost): cytoscape.ElementDefinition {
     return {
         data: {
@@ -137,7 +122,7 @@ function getOpPost(threadData: IThread): IPost {
 export function getAnswersInfo(text: string): IAnswerInfo[] {
     const result: IAnswerInfo[] = []
     const tmpSet = new Set<IAnswerInfo>()
-    const regex = new RegExp('<a href="\\/[a-z]\\/res\\/[0-9]*.html#[0-9]*" class="post-reply-link" data-thread="([0-9]*)" data-num="([0-9]*)">[>0-9]*<\\/a>', 'gmi')
+    const regex = new RegExp('data-thread="([0-9]*)" data-num="([0-9]*)">[>0-9]*<\\/a', 'gmi')
 
     let matches
 
@@ -158,7 +143,6 @@ export function getAnswersInfo(text: string): IAnswerInfo[] {
 }
 
 export function calcBoxPosition(viewport: IBoundingBox, nodes: any, zoom: number) {
-    console.log(nodes)
     return nodes.map((nodeData: any) => {
         const {boundBox, data} = nodeData
         return {

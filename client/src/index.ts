@@ -27,19 +27,20 @@ const app = cytoscape({
     layout: {
         //@ts-ignore
         name: 'dagre',
-        // nodeSep: '1', // the separation between adjacent nodes in the same rank
-        // edgeSep: undefined, // the separation between adjacent edges in the same rank
-        rankSep: '123', // the separation between each rank in the layout
-        // rankDir: undefined, // 'TB' for top to bottom flow, 'LR' for left to right,
+        nodeSep: '100', // the separation between adjacent nodes in the same rank
+        edgeSep: '100', // the separation between adjacent edges in the same rank
+        rankSep: '200', // the separation between each rank in the layout
+        rankDir: 'TB', // 'TB' for top to bottom flow, 'LR' for left to right,
         ranker: 'network-simplex', // Type of algorithm to assign a rank to each node in the input graph. Possible values: 'network-simplex', 'tight-tree' or 'longest-path'
-        // minLen: function( edge ){ return 1; }, // number of ranks to keep between the source and target of the edge
+        // @ts-ignore
+        minLen: function( edge ){ return 1; }, // number of ranks to keep between the source and target of the edge
         // edgeWeight: function( edge ){ return 1; }, // higher weight edges are generally made shorter and straighter than lower weight edges
         //
         // // general layout options
-        fit: true, // whether to fit to viewport
+        // fit: true, // whether to fit to viewport
         // padding: 30, // fit padding
         // spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
-        // nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
+        nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
         // animate: false, // whether to transition the node positions
         // animateFilter: function( node, i ){ return true; }, // whether to animate specific nodes when animation is on; non-animated nodes immediately go to their final positions
         // animationDuration: 500, // duration of animation in ms if enabled
@@ -58,7 +59,6 @@ function onNodeClick(e: any) {
     data.nodes.forEach(node => {
         if (node.data.id === targetId) {
             const answersInfo = Utils.getAnswersInfo(node.data.comment)
-            console.log(node.data, node.data.comment, answersInfo.map(answerInfo => answerInfo.post))
         }
     })
 }
@@ -73,7 +73,6 @@ function onRender() {
         return bb.x1 > ext.x1 && bb.x2 < ext.x2 && bb.y1 > ext.y1 && bb.y2 < ext.y2
     })
         .map(item => {
-            console.log(item)
             return {
                 data: item.data(),
                 // @ts-ignore
@@ -96,6 +95,7 @@ function onRender() {
         el.style.zIndex = '9999'
         el.style.textOverflow = 'ellipsis'
         el.style.overflow = 'hidden'
+        el.style.fontSize = 17 * zoom + 'px'
 
         el.innerHTML = nodeData.data.comment
 
@@ -105,5 +105,4 @@ function onRender() {
 
 app.on('click', 'node', onNodeClick)
 
-console.log(app)
 app.on('render', onRender)
