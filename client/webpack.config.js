@@ -7,6 +7,15 @@ module.exports = {
     devServer: {
         compress: true,
         port: 3000,
+        proxy: {
+            '/api': {
+                target: 'https://2ch.hk',
+                // secure: false,
+                changeOrigin: true,
+                logLevel: 'debug',
+                pathRewrite: { '^/api': '' },
+            },
+        }
     },
     module: {
         rules: [

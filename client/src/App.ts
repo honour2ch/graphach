@@ -1,13 +1,14 @@
 import cytoscape, {Stylesheet} from 'cytoscape'
 import * as Utils from './utils'
 import threadData from './thread-data'
+import {IThread} from "./Interfaces";
 const dagre = require('cytoscape-dagre')
 
 cytoscape.use( dagre )
 
 
 const defaultConfig: IAppConfig = {
-    postsRenderLimit: 20
+    postsRenderLimit: 30
 }
 const cyStyle: Stylesheet[] = [{
     selector: 'node',
@@ -50,33 +51,29 @@ export default class App {
             style: cyStyle,
         })
 
-        this.loadData()
-
         this.cy.on('click', 'node', this.onNodeClick.bind(this))
         this.cy.on('render', this.onRender.bind(this))
+
+        // @ts-ignore
+        window.loadThread = this.loadData.bind(this)
     }
 
-    loadData() {
+    private async loadData(board: string, thread: number) {
         this.cy.elements().remove()
-        this.cy.add(this.data)
+        const threadData = await this.loadThreadData(board, thread)
+        const preparedData = Utils.convertThreadToGraph(threadData)
+        this.cy.add(preparedData)
         this.cy.layout(cyLayout).run()
     }
 
     private onRender() {
-        const zoom = this.cy.zoom()
-
-        this.postsContainer.innerHTML = ''
+        this.removePosts()
 
         const visibleNodes = this.getVisibleNodes(true)
         if (visibleNodes.length > this.config.postsRenderLimit) { return }
 
         visibleNodes.forEach((nodeData: any) => {
-            const width = 350*zoom
-            const height = 300*zoom
-            const {x, y} = nodeData
-            const fontSize = 17 * zoom
-            const postContainer = Utils.createPostContainer(nodeData.data.comment, width, height, x, y, fontSize)
-
+            const postContainer = this.createPostContainer(nodeData)
             this.postsContainer.appendChild(postContainer)
         })
     }
@@ -108,6 +105,25 @@ export default class App {
             })
 
         return normalizePositionData ? Utils.calcBoxPosition(ext, dirtyResult, zoom) : dirtyResult
+    }
+
+    private createPostContainer(nodeData: any): HTMLDivElement {
+        const zoom = this.cy.zoom()
+        const width = 350*zoom
+        const height = 300*zoom
+        const {x, y} = nodeData
+        const fontSize = 17 * zoom
+
+        return Utils.createPostContainer(nodeData.data.comment, width, height, x, y, fontSize)
+    }
+
+    private removePosts() {
+        this.postsContainer.innerHTML = ''
+    }
+
+    private loadThreadData(board: string, thread: number): Promise<IThread> {
+        return fetch(`/api/${board}/res/${thread}.json`)
+            .then((response) => response.json())
     }
 }
 
