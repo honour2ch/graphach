@@ -1,7 +1,7 @@
 import cytoscape from "cytoscape"
 import * as Utils from './utils'
 import threadData from './thread-data'
-import {IBoundingBox, IPosition, IPost, IThread} from "./Interfaces";
+import './style.scss'
 
 const dagre = require('cytoscape-dagre')
 
@@ -89,12 +89,8 @@ function onRender() {
         el.className = 'post'
         el.style.width = `${350*zoom}px`
         el.style.height = `${300*zoom}px`
-        el.style.position = 'absolute'
         el.style.left = `${nodeData.x}px`
         el.style.top = `${nodeData.y}px`
-        el.style.zIndex = '9999'
-        el.style.textOverflow = 'ellipsis'
-        el.style.overflow = 'hidden'
         el.style.fontSize = 17 * zoom + 'px'
 
         el.innerHTML = nodeData.data.comment
