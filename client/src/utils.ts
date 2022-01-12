@@ -1,10 +1,9 @@
-import {uniqBy, concat} from 'lodash'
+import {uniqBy} from 'lodash'
 import {v4 as UUID} from "uuid"
-import cytoscape, {CollectionReturnValue, NodeDefinition} from "cytoscape";
-import {IAnswerInfo, IBoundingBox, IPosition, IPost, IThread} from "./Interfaces";
-import preventExtensions = Reflect.preventExtensions;
+import cytoscape from "cytoscape";
+import {IAnswerInfo, IBoundingBox, IPost, IThread} from "./Interfaces";
 
-export function createCytoscapeContainer() {
+export function createCytoscapeContainer(): HTMLDivElement {
     const container = document.createElement('div')
 
     container.className = 'cytoscape'
@@ -14,11 +13,10 @@ export function createCytoscapeContainer() {
     return container
 }
 
-export function createPostsContainer() {
+export function createPostsContainer(): HTMLDivElement {
     const container = document.createElement('div')
 
     container.className = 'posts'
-    document.body.appendChild(container)
 
     return container
 }

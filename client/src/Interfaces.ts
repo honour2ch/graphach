@@ -23,8 +23,3 @@ export interface IBoundingBox {
     w: number
     h: number
 }
-
-export interface IPosition {
-    x: number
-    y: number
-}
