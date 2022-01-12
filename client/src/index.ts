@@ -1,6 +1,7 @@
 import cytoscape from "cytoscape"
 import * as Utils from './utils'
 import threadData from './thread-data'
+import {POSTS_RENDER_LIMIT} from './config'
 import './style.scss'
 import './makaba.scss'
 
@@ -81,9 +82,11 @@ function onRender() {
             }
         })
     const zoom = app.zoom()
-    const postsPositions = Utils.calcBoxPosition(ext, nodesPositions, zoom)
 
     postsContainer.innerHTML = ''
+    if (nodesPositions.length > POSTS_RENDER_LIMIT) { return }
+
+    const postsPositions = Utils.calcBoxPosition(ext, nodesPositions, zoom)
 
     postsPositions.forEach((nodeData: any) => {
         const width = 350*zoom
