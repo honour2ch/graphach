@@ -63,29 +63,14 @@ export default class App {
     }
 
     private onRender() {
-        const ext = this.cy.extent()
-        const nodesPositions = this.cy
-            .nodes()
-            .filter(n => {
-            // @ts-ignore
-            const bb = n.boundingBox()
-            return bb.x1 > ext.x1 && bb.x2 < ext.x2 && bb.y1 > ext.y1 && bb.y2 < ext.y2
-        })
-            .map(item => {
-                return {
-                    data: item.data(),
-                    // @ts-ignore
-                    boundBox: item.boundingBox()
-                }
-            })
         const zoom = this.cy.zoom()
 
         this.postsContainer.innerHTML = ''
-        if (nodesPositions.length > this.config.postsRenderLimit) { return }
 
-        const postsPositions = Utils.calcBoxPosition(ext, nodesPositions, zoom)
+        const visibleNodes = this.getVisibleNodes(true)
+        if (visibleNodes.length > this.config.postsRenderLimit) { return }
 
-        postsPositions.forEach((nodeData: any) => {
+        visibleNodes.forEach((nodeData: any) => {
             const width = 350*zoom
             const height = 300*zoom
             const {x, y} = nodeData
@@ -104,6 +89,25 @@ export default class App {
                 const answersInfo = Utils.getAnswersInfo(node.data.comment)
             }
         })
+    }
+
+    private getVisibleNodes(normalizePositionData = false) {
+        const ext = this.cy.extent()
+        const zoom = this.cy.zoom()
+        const dirtyResult = this.cy
+            .nodes()
+            .filter(n => {
+                const bb = n.boundingBox({})
+                return bb.x1 > ext.x1 && bb.x2 < ext.x2 && bb.y1 > ext.y1 && bb.y2 < ext.y2
+            })
+            .map(item => {
+                return {
+                    data: item.data(),
+                    boundBox: item.boundingBox({})
+                }
+            })
+
+        return normalizePositionData ? Utils.calcBoxPosition(ext, dirtyResult, zoom) : dirtyResult
     }
 }
 
