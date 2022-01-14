@@ -74,8 +74,9 @@ export default class App {
 
         const visibleNodes = this.getVisibleNodes(true)
         let posts = ''
+        const zoom = this.cy.zoom()
 
-        if (visibleNodes.length > this.config.postsRenderLimit) { return }
+        if (visibleNodes.length > this.config.postsRenderLimit || zoom < 0.17) { return }
 
         visibleNodes.forEach((nodeData: any) => {
             posts += this.createPostContainer(nodeData)
