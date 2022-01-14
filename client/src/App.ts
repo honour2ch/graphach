@@ -99,7 +99,10 @@ export default class App {
             .nodes()
             .filter(n => {
                 const bb = n.boundingBox({})
-                return bb.x1 > ext.x1 && bb.x2 < ext.x2 && bb.y1 > ext.y1 && bb.y2 < ext.y2
+                return bb.x1 > ext.x1 - NODE_WIDTH
+                    && bb.x2 < ext.x2 + NODE_WIDTH
+                    && bb.y1 > ext.y1 - NODE_HEIGHT
+                    && bb.y2 < ext.y2 + NODE_HEIGHT
             })
             .map(item => {
                 return {
