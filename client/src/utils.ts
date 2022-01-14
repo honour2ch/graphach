@@ -85,7 +85,8 @@ export function convertThreadToGraph(thread: IThread): cytoscape.ElementsDefinit
         }
     })
 
-    const color = chroma.scale(['black','red','yellow','white']).correctLightness().domain([0, nodeMap.size])
+    const color = chroma.scale(['black','red','yellow'])
+        .domain([0, nodeMap.size])
     let i = 0
     nodeMap.forEach((value, key, map) => {
         value.forEach(node => {
