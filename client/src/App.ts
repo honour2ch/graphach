@@ -1,7 +1,12 @@
 import cytoscape, {Stylesheet} from 'cytoscape'
+const dagre = require('cytoscape-dagre')
 import * as Utils from './utils'
 import {IThread} from "./Interfaces";
-const dagre = require('cytoscape-dagre')
+import {
+    NODE_WIDTH,
+    NODE_HEIGHT,
+    NODE_FONT_SIZE
+} from './config'
 
 cytoscape.use( dagre )
 
@@ -13,8 +18,8 @@ const cyStyle: Stylesheet[] = [{
     selector: 'node',
     style: {
         shape: 'rectangle',
-        width: '350',
-        height: '300',
+        width: `${NODE_WIDTH}`,
+        height: `${NODE_HEIGHT}`,
         'text-wrap': 'wrap',
         'text-max-width': '300',
         'text-halign': 'center',
@@ -108,10 +113,10 @@ export default class App {
 
     private createPostContainer(nodeData: any): string {
         const zoom = this.cy.zoom()
-        const width = 350*zoom
-        const height = 300*zoom
+        const width = NODE_WIDTH * zoom
+        const height = NODE_HEIGHT * zoom
         const {x, y} = nodeData
-        const fontSize = 17 * zoom
+        const fontSize = NODE_FONT_SIZE * zoom
 
         return Utils.createPostContainer(nodeData.data.comment, width, height, x, y, fontSize)
     }
