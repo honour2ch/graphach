@@ -3,24 +3,6 @@ import {v4 as UUID} from "uuid"
 import cytoscape from "cytoscape";
 import {IAnswerInfo, IBoundingBox, IPost, IThread} from "./Interfaces";
 
-export function createCytoscapeContainer(): HTMLDivElement {
-    const container = document.createElement('div')
-
-    container.className = 'cytoscape'
-
-    document.body.appendChild(container)
-
-    return container
-}
-
-export function createPostsContainer(): HTMLDivElement {
-    const container = document.createElement('div')
-
-    container.className = 'posts'
-
-    return container
-}
-
 export function createPostContainer(comment: string, width: number, height: number, x: number, y: number, fontSize: number): HTMLDivElement {
     const postContainer = document.createElement('div')
     const commentContainer = document.createElement('article')

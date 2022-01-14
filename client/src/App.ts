@@ -35,14 +35,11 @@ const cyLayout = {
 export default class App {
     config: IAppConfig
     cy: cytoscape.Core
-    cytoscapeContainer = Utils.createCytoscapeContainer()
-    postsContainer = Utils.createPostsContainer()
+    cytoscapeContainer = document.getElementById('cytoscape_container') as HTMLDivElement
+    postsContainer = document.getElementById('posts_container') as HTMLDivElement
 
     constructor(config?: IAppConfig) {
         this.config = {...defaultConfig, ...config}
-
-        document.body.appendChild(this.cytoscapeContainer)
-        document.body.appendChild(this.postsContainer)
 
         this.cy = cytoscape({
             container: this.cytoscapeContainer,
