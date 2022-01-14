@@ -1,6 +1,7 @@
-import {uniqBy, template, templateSettings} from 'lodash'
+import {uniqBy, template, templateSettings, random} from 'lodash'
 import {v4 as UUID} from "uuid"
-import cytoscape from "cytoscape";
+import chroma from "chroma-js";
+import cytoscape, {EdgeDefinition, ElementDefinition} from "cytoscape";
 import {IAnswerInfo, IBoundingBox, IPost, IThread} from "./Interfaces";
 
 templateSettings.interpolate = /\{\{([\s\S]+?)\}\}/g;
@@ -26,7 +27,7 @@ export function convertThreadToGraph(thread: IThread): cytoscape.ElementsDefinit
 
     const posts = thread.threads[0].posts
     const postsMap: Map<number, IPost> = new Map<number, IPost>()
-    const nodeMap: Map<number, cytoscape.ElementDefinition[]> = new Map<number, cytoscape.ElementDefinition[]>()
+    const nodeMap: Map<number, ElementDefinition[]> = new Map<number, ElementDefinition[]>()
     const opPost = getOpPost(thread)
 
     posts.forEach(post => {
@@ -42,16 +43,20 @@ export function convertThreadToGraph(thread: IThread): cytoscape.ElementsDefinit
 
         const answersInfo = getAnswersInfo(post.comment)
 
-        if (answersInfo.length === 0) {
-            const node = createNode(post)
-            result.nodes.push(node)
-            nodeMap.set(post.num, [node])
+        function registerNode(sourceNodeId: string | undefined) {
+            if (!sourceNodeId) {
+                throw new Error('parameter sourceNodeId not found')
+            }
 
-            const sourceNodeId = opPostNode.data.id
+            const node = createNode(post)
             const targetNodeId = node.data.id
+            const nodes = nodeMap.get(post.num) || []
+
+            result.nodes.push(node)
+            nodeMap.set(post.num, [...nodes, node])
 
             if (sourceNodeId && targetNodeId) {
-                const edge: cytoscape.EdgeDefinition = {
+                const edge: EdgeDefinition = {
                     data: {
                         source: sourceNodeId,
                         target: targetNodeId
@@ -59,6 +64,10 @@ export function convertThreadToGraph(thread: IThread): cytoscape.ElementsDefinit
                 }
                 result.edges.push(edge)
             }
+        }
+
+        if (answersInfo.length === 0) {
+            registerNode(opPostNode.data.id)
         } else {
             answersInfo.forEach(answerInfo => {
                 const parentNode = postsMap.get(answerInfo.post)
@@ -66,23 +75,7 @@ export function convertThreadToGraph(thread: IThread): cytoscape.ElementsDefinit
                     const parentPostNodes = nodeMap.get(answerInfo.post)
                     if (parentPostNodes && parentPostNodes.length > 0) {
                         parentPostNodes.forEach(parentPostNode => {
-                            const node = createNode(post)
-                            const sourceNodeId = parentPostNode.data.id
-                            const targetNodeId = node.data.id
-
-                            result.nodes.push(node)
-                            const nodes = nodeMap.get(post.num) || []
-                            nodeMap.set(post.num, [...nodes, node])
-
-                            if (sourceNodeId && targetNodeId) {
-                                const edge: cytoscape.EdgeDefinition = {
-                                    data: {
-                                        source: sourceNodeId,
-                                        target: targetNodeId
-                                    }
-                                }
-                                result.edges.push(edge)
-                            }
+                            registerNode(parentPostNode.data.id)
                         })
                     }
                 } else {
@@ -90,6 +83,14 @@ export function convertThreadToGraph(thread: IThread): cytoscape.ElementsDefinit
                 }
             })
         }
+    })
+
+    const color = chroma.scale(['black','red','yellow','white']).correctLightness().domain([0, nodeMap.size])
+    let i = 0
+    nodeMap.forEach((value, key, map) => {
+        value.forEach(node => {
+            node.data.color = color(i++).hex()
+        })
     })
 
     return result
@@ -142,4 +143,39 @@ export function calcBoxPosition(viewport: IBoundingBox, nodes: any, zoom: number
             y: (boundBox.y1 - viewport.y1) * zoom
         }
     })
+}
+
+function getRandomGRBColor_(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+let color = {r: 77, g:0, b:243}
+const step = 100
+function getRandomGRBColor(): string {
+    let {r, g, b} = color
+
+    if (b < 128) {
+        b += step
+    } else {
+        g+= step/10
+        b = 0
+    }
+    color = {
+        r,g,b
+    }
+
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+
+function registerColor(postNum: number, colors: Map<number, string>): string {
+    const color = getRandomGRBColor()
+    colors.set(postNum, color)
+
+    return color
 }

@@ -1,4 +1,4 @@
-import cytoscape, {Stylesheet} from 'cytoscape'
+import cytoscape, {Stylesheet, NodeSingular} from 'cytoscape'
 const dagre = require('cytoscape-dagre')
 import * as Utils from './utils'
 import {IThread} from "./Interfaces";
@@ -17,6 +17,7 @@ const defaultConfig: IAppConfig = {
 const cyStyle: Stylesheet[] = [{
     selector: 'node',
     style: {
+        'background-color': 'data(color)',
         shape: 'rectangle',
         width: `${NODE_WIDTH}`,
         height: `${NODE_HEIGHT}`,
@@ -52,7 +53,8 @@ export default class App {
             wheelSensitivity: 0.1
         })
 
-        this.cy.on('click', 'node', this.onNodeClick.bind(this))
+        // this.cy.on('mouseover', 'node', this.onNodeMouseOver.bind(this))
+        // this.cy.on('mouseout', 'node', this.onNodeMouseout.bind(this))
         this.cy.on('render', this.onRender.bind(this))
 
         // @ts-ignore
@@ -80,16 +82,6 @@ export default class App {
         })
 
         this.postsContainer.innerHTML = posts
-    }
-
-    private onNodeClick(e: any) {
-        const targetId = e.target.id()
-
-        // this.data.nodes.forEach(node => {
-        //     if (node.data.id === targetId) {
-        //         const answersInfo = Utils.getAnswersInfo(node.data.comment)
-        //     }
-        // })
     }
 
     private getVisibleNodes(normalizePositionData = false) {
@@ -131,6 +123,10 @@ export default class App {
     private loadThreadData(board: string, thread: number): Promise<IThread> {
         return fetch(`/api/${board}/res/${thread}.json`)
             .then((response) => response.json())
+    }
+
+    private getChildNodes(node: NodeSingular) {
+
     }
 }
 
