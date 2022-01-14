@@ -1,5 +1,5 @@
-import './style.scss'
-import './makaba.scss'
+import './styles/style.scss'
+import './styles/makaba.scss'
 import App from './App'
 
 new App()
