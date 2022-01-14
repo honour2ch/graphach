@@ -66,12 +66,15 @@ export default class App {
         this.removePosts()
 
         const visibleNodes = this.getVisibleNodes(true)
+        let posts = ''
+
         if (visibleNodes.length > this.config.postsRenderLimit) { return }
 
         visibleNodes.forEach((nodeData: any) => {
-            const postContainer = this.createPostContainer(nodeData)
-            this.postsContainer.appendChild(postContainer)
+            posts += this.createPostContainer(nodeData)
         })
+
+        this.postsContainer.innerHTML = posts
     }
 
     private onNodeClick(e: any) {
@@ -103,7 +106,7 @@ export default class App {
         return normalizePositionData ? Utils.calcBoxPosition(ext, dirtyResult, zoom) : dirtyResult
     }
 
-    private createPostContainer(nodeData: any): HTMLDivElement {
+    private createPostContainer(nodeData: any): string {
         const zoom = this.cy.zoom()
         const width = 350*zoom
         const height = 300*zoom

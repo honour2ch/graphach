@@ -200,7 +200,7 @@ input[type="radio"] {vertical-align: text-bottom;}
 .thread__missed { font-size: 0.9em;color: #5d5d5d;color: var(--theme_default_alttext);margin-left: 20px;}
 .post {	padding: 4px;margin: 0;word-break: break-word;word-wrap: break-word;}
 .post_type_oppost {max-width:60vw;}
-.post_type_reply {display: inline-block;max-width:50vw;background: #DDDDDD;background: var(--theme_default_postbg);border: 1px solid var(--theme_default_border);border-radius: 3px;-moz-border-radius: 3px;-webkit-border-radius: 3px; position: relative; margin-left: 20px;}
+.post_type_reply {display: inline-block;max-width:50vw;background: #DDDDDD;background: var(--theme_default_postbg);border: 1px solid var(--theme_default_border);border-radius: 3px;-moz-border-radius: 3px;-webkit-border-radius: 3px; position: relative;}
 .post_type_reply:before { content: '...';position: absolute;top: -5px;left: -21px;color: #8c8c8c;color: var(--theme_default_icon);}
 .post_preview:before {content: ''}
 .post_withimg {    min-width: 600px;}
@@ -210,7 +210,7 @@ input[type="radio"] {vertical-align: text-bottom;}
 .post_type_replied { border-left: 2px dashed #FF6600; border-left: 2px dashed var(--theme_default_link);}
 .post_type_watched { border-left: 2px solid #FF6600; border-left: 2px solid var(--theme_default_link);}
 .post_type_highlight {background-color:#EEDACB;background-color:var(--theme_default_postbghighlight);}
-.post__message {overflow: auto;max-height: 620px;margin: 16px;}
+.post__message {overflow: auto;max-height: 620px;}
 .post__message_op {overflow: inherit;max-height: none;margin: 16px 36px;}
 .twitter-tweet-rendered {overflow: auto;}
 .post__title {background:inherit;font-size:1.1em;	color:#004A99;color: var(--theme_default_title);font-weight:bold;}

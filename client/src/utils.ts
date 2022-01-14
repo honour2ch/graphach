@@ -1,26 +1,21 @@
-import {uniqBy} from 'lodash'
+import {uniqBy, template, templateSettings} from 'lodash'
 import {v4 as UUID} from "uuid"
 import cytoscape from "cytoscape";
 import {IAnswerInfo, IBoundingBox, IPost, IThread} from "./Interfaces";
 
-export function createPostContainer(comment: string, width: number, height: number, x: number, y: number, fontSize: number): HTMLDivElement {
-    const postContainer = document.createElement('div')
-    const commentContainer = document.createElement('article')
+templateSettings.interpolate = /\{\{([\s\S]+?)\}\}/g;
 
-    postContainer.className = 'post post_type_reply'
-    commentContainer.className = 'post__message '
+export function createPostContainer(comment: string, width: number, height: number, left: number, top: number, fontSize: number): string {
+    const postTemplate = template(`
+        <div 
+                class="post post_type_reply"
+                style="width: {{width}}px; height: {{height}}px; left: {{left}}px; top: {{top}}px; font-size: {{fontSize}}px"
+            >
+            <article class="post__message">{{comment}}</article>
+        </div>
+    `)
 
-    postContainer.appendChild(commentContainer)
-    commentContainer.innerHTML = comment
-
-    postContainer.className = 'post'
-    postContainer.style.width = `${width}px`
-    postContainer.style.height = `${height}px`
-    postContainer.style.left = `${x}px`
-    postContainer.style.top = `${y}px`
-    postContainer.style.fontSize = `${fontSize}px`
-
-    return postContainer
+    return postTemplate({comment, width, height, left, top, fontSize})
 }
 
 export function convertThreadToGraph(thread: IThread): cytoscape.ElementsDefinition {
